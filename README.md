@@ -5,9 +5,10 @@ Projet de fin d'année (PFA) — **Douae, Meryem, Hala**.
 Plateforme DataOps qui automatise le cycle de traitement de fichiers CSV :
 import → contrôle qualité → nettoyage → stockage PostgreSQL → orchestration Airflow → supervision.
 
-> **État actuel : étape 2 / 6 (mise en place).** Seuls PostgreSQL, la configuration, les contrats
-> entre modules et la CI sont en place et testés. Le pipeline, Airflow, Streamlit et le
-> monitoring arrivent aux étapes 3 à 5 (voir [Feuille de route](#feuille-de-route)).
+> **État actuel : étape 3 / 6 terminée.** PostgreSQL, la configuration, les contrats et le
+> pipeline (ingestion, contrôle qualité, nettoyage, stockage) sont en place et testés.
+> Airflow, Streamlit et le monitoring arrivent aux étapes 4 et 5
+> (voir [Feuille de route](#feuille-de-route)).
 
 ## Architecture
 
@@ -67,6 +68,16 @@ Dans VS Code : `Cmd+Shift+P` → *Python: Select Interpreter* → `.venv`.
 
 `make help` liste toutes les commandes.
 
+### Lancer le pipeline
+
+```bash
+.venv/bin/python -m dmh.pipeline.runner data/sample/demo_sales.csv demo_sales
+# SUCCESS  lignes lues=20  valides=12  rejetées=8  score qualité=60.0
+```
+
+Les lignes valides vont dans la table `data_demo_sales`, les lignes rejetées dans
+`data/quarantine/` avec leur motif, et chaque exécution dans l'historique (`pipeline_runs`).
+
 ### Ports
 
 | Service | Adresse | Remarque |
@@ -86,13 +97,14 @@ Tous les ports sont liés à `127.0.0.1` : rien n'est exposé sur le réseau loc
 | `DMH_DB_PASSWORD manquant dans .env` | Lancer `make env` |
 | `port is already allocated` sur 5433 | Changer `POSTGRES_HOST_PORT` **et** `DMH_DB_PORT` dans `.env` |
 | `password authentication failed` après modification du `.env` | Les mots de passe sont fixés à la **première** création du volume : `make reset-db` (⚠ efface les données) |
+| `No module named 'dmh'` alors que `make test` passe | Projet dans un dossier synchronisé par iCloud (Bureau, Documents) : iCloud cache un fichier de `.venv`. Placer le projet hors de ces dossiers, ou `.venv` dans `~/.venvs/dmh` avec un lien symbolique |
 
 ## Sécurité
 
 - Aucun secret dans le code : tout passe par `.env` (ignoré par Git) ; modèle dans [.env.example](.env.example).
 - Deux bases séparées avec deux utilisateurs distincts ; l'utilisateur applicatif n'est pas
   super-utilisateur et ne peut pas se connecter à la base Airflow.
-- La CI génère des mots de passe éphémères et ne déploie rien.
+- La CI (désactivée pour l'instant) génère des mots de passe éphémères et ne déploie rien.
 
 ## Organisation de l'équipe
 
@@ -121,7 +133,8 @@ En attendant une implémentation, chacune peut construire un `RunResult` factice
 1. `main` ne reçoit que des Pull Requests.
 2. Une branche par fonctionnalité : `feat/douae-quality-checks`, `feat/hala-dashboard`…
 3. Avant de pousser : `make check`.
-4. Chaque PR est relue par une autre membre ; la CI doit être verte.
+4. Chaque PR est relue par une autre membre ; `make check` doit passer (la CI GitHub est
+   désactivée, la vérification se fait en local).
 
 ## Feuille de route
 
@@ -129,7 +142,7 @@ En attendant une implémentation, chacune peut construire un `RunResult` factice
 |---|---|---|
 | 1 | Analyse, architecture, plan | ✅ |
 | 2 | Arborescence, dépendances, PostgreSQL, contrats, CI | ✅ testé localement |
-| 3 | Pipeline : ingestion, qualité, nettoyage, stockage, tests, jeu de démo | ⏳ |
+| 3 | Pipeline : ingestion, qualité, nettoyage, stockage, tests, jeu de démo | ✅ (PR #1) |
 | 4 | Airflow, métriques, Prometheus/Grafana | ⏳ |
 | 5 | Dashboard Streamlit (6 pages), tests d'intégration | ⏳ |
 | 6 | Finalisation, schémas, scénarios de démonstration, limites | ⏳ |
