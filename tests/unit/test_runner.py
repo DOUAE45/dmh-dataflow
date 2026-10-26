@@ -60,3 +60,14 @@ def test_missing_required_column_fails_without_loading(engine, tmp_path):
     assert "SchemaMismatchError" in result.error
     assert result.quality.score == 0.0
     assert result.rows_valid == 0
+
+
+def test_rerun_of_same_file_loads_nothing_new(engine):
+    run_pipeline(SAMPLE, "demo_sales", "test", engine=engine)
+    again = run_pipeline(SAMPLE, "demo_sales", "test", engine=engine)
+
+    assert again.status is RunStatus.SUCCESS, again.error
+    assert (again.rows_valid, again.rows_rejected) == (0, 20)
+    table = repository.data_table(load_dataset_config("demo_sales").schema)
+    with engine.connect() as conn:
+        assert conn.execute(select(func.count()).select_from(table)).scalar() == 12

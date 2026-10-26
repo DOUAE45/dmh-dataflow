@@ -31,6 +31,7 @@ from sqlalchemy import (
     Text,
     delete,
     insert,
+    inspect,
     select,
 )
 
@@ -97,6 +98,21 @@ def data_table(schema: DatasetSchema) -> Table:
         Column("_loaded_at", DateTime(timezone=True), nullable=False),
         *columns,
     )
+
+
+def existing_keys(conn: Connection, schema: DatasetSchema) -> dict[str, set]:
+    """Valeurs déjà chargées pour chaque colonne `unique` (vide si la table n'existe pas encore).
+
+    Toutes les valeurs sont lues en mémoire : suffisant pour les volumes du projet.
+    """
+    unique = [c.name for c in schema.columns if c.unique]
+    if not unique or not inspect(conn).has_table(f"data_{schema.name}"):
+        return {}
+    table = data_table(schema)
+    return {
+        name: set(conn.execute(select(table.c[name]).distinct()).scalars()) - {None}
+        for name in unique
+    }
 
 
 def store_valid_rows(conn: Connection, schema: DatasetSchema, df: pd.DataFrame, run_id: str) -> int:

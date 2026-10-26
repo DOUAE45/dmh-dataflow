@@ -67,7 +67,9 @@ def run_pipeline(
         df = normalize(read_csv(archived), config)
         result.rows_read = len(df)
 
-        cleaned = clean(df, config)
+        with engine.connect() as conn:
+            known = repository.existing_keys(conn, config.schema)
+        cleaned = clean(df, config, known)
         result.quality = cleaned.report
         missing = [i.column for i in cleaned.report.issues if i.check == "missing_column"]
         if missing:

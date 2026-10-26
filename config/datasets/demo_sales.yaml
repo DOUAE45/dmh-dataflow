@@ -2,7 +2,8 @@
 #
 # Types possibles : int, float, str, date, bool
 #   required: false  -> une valeur vide est acceptée (défaut : true)
-#   unique: true     -> une valeur déjà vue sur une ligne précédente est rejetée
+#   unique: true     -> une valeur déjà vue sur une ligne précédente, ou déjà chargée en base
+#                       par une exécution précédente, est rejetée
 name: demo_sales
 description: Ventes fictives d'une boutique en ligne
 

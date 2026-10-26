@@ -5,7 +5,9 @@ Une ligne est **rejetée** si au moins une de ces règles est violée :
   - une valeur obligatoire est manquante ;
   - une valeur n'a pas le format attendu (nombre, date, booléen) ;
   - la ligne est le doublon exact d'une ligne précédente ;
-  - une colonne `unique` reprend une valeur déjà vue sur une ligne précédente.
+  - une colonne `unique` reprend une valeur déjà vue sur une ligne précédente ;
+  - une colonne `unique` reprend une valeur déjà chargée par une exécution précédente
+    (seulement si `existing_keys` est fourni, ce que fait le pipeline).
 
 Score qualité = 100 × lignes valides / lignes totales, arrondi à 0,1 (100 pour un fichier
 sans ligne). Le même calcul sert au rapport et au nettoyage : le score affiché correspond
@@ -14,6 +16,7 @@ toujours exactement à la part des lignes chargées dans PostgreSQL.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 import pandas as pd
@@ -41,7 +44,13 @@ def assess_quality(
     return check_rows(df, schema, date_format).report
 
 
-def check_rows(df: pd.DataFrame, schema: DatasetSchema, date_format: str = "%Y-%m-%d") -> RowCheck:
+def check_rows(
+    df: pd.DataFrame,
+    schema: DatasetSchema,
+    date_format: str = "%Y-%m-%d",
+    existing_keys: Mapping[str, set] | None = None,
+) -> RowCheck:
+    """`existing_keys` : valeurs déjà en base par colonne `unique` (repository.existing_keys)."""
     report = QualityReport(rows_total=len(df))
     reasons: list[pd.Series] = []
 
@@ -130,6 +139,22 @@ def check_rows(df: pd.DataFrame, schema: DatasetSchema, date_format: str = "%Y-%
                 )
             )
             flag(repeated, f"{spec.name} déjà utilisé")
+
+        # Clé déjà chargée en base par une exécution précédente (relance du même fichier).
+        known = (existing_keys or {}).get(spec.name)
+        if known:
+            comparable = key.dt.date if spec.dtype == "date" else key  # la base renvoie des dates
+            in_db = key.notna() & comparable.isin(known)
+            if in_db.any():
+                report.issues.append(
+                    QualityIssue(
+                        "duplicate",
+                        spec.name,
+                        int(in_db.sum()),
+                        f"{int(in_db.sum())} valeur(s) de {spec.name} déjà chargée(s) en base",
+                    )
+                )
+                flag(in_db, f"{spec.name} déjà chargé en base")
 
     if reasons:
         combined = pd.concat(reasons, axis=1).apply(
