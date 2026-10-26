@@ -1,0 +1,32 @@
+# Jeu de données fictif (data/sample/demo_inventaire.csv) : export Excel français,
+# séparateur ";", encodage Latin-1, dates JJ/MM/AAAA, en-têtes avec accents et espaces.
+#
+# Types possibles : int, float, str, date, bool
+#   required: false  -> une valeur vide est acceptée (défaut : true)
+#   unique: true     -> une valeur déjà vue sur une ligne précédente est rejetée
+name: demo_inventaire
+description: Inventaire fictif d'un magasin de matériel de bureau
+
+columns:
+  - { name: ref, dtype: str, unique: true }
+  - { name: designation, dtype: str }
+  - { name: categorie, dtype: str }
+  - { name: quantite, dtype: int }
+  - { name: prix_unitaire, dtype: float }
+  - { name: date_inventaire, dtype: date }
+  - { name: actif, dtype: bool, required: false }
+
+cleaning:
+  # Format des colonnes de type date (syntaxe strftime de Python)
+  date_format: "%d/%m/%Y"
+  # Colonnes mises en minuscules avant les contrôles ("INFORMATIQUE" = "informatique")
+  lowercase: [categorie]
+  # Renommage des en-têtes du CSV : { nom_dans_le_csv: nom_dans_le_schema }
+  rename:
+    "Réf produit": ref
+    "Désignation": designation
+    "Catégorie": categorie
+    "Quantité en stock": quantite
+    "Prix unitaire (EUR)": prix_unitaire
+    "Date inventaire": date_inventaire
+    "Actif": actif

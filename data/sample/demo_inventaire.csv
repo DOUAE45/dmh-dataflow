@@ -1,0 +1,26 @@
+Réf produit;Désignation;Catégorie;Quantité en stock;Prix unitaire (EUR);Date inventaire;Actif
+REF-001;Clavier sans fil;Informatique;42;49,90;01/09/2026;Oui
+REF-002;Souris optique;Informatique;120;19,50;01/09/2026;Oui
+REF-003;Écran 24 pouces;INFORMATIQUE;15;159,00;01/09/2026;Oui
+REF-004;Câble HDMI 2 m;Connectique;300;8,90;01/09/2026;Oui
+REF-005;Chaise de bureau;Mobilier;8;189,00;02/09/2026;Oui
+REF-006;Lampe LED;Mobilier;;24,99;02/09/2026;Oui
+REF-007;Bureau assis-debout;Mobilier;3;429,00;02/09/2026;Non
+REF-008;Casque audio;Audio;27;N/A;02/09/2026;Oui
+REF-009;Enceinte Bluetooth;Audio;19;59,90;03/09/2026;Oui
+REF-010;Webcam HD;Informatique;34;45,00;31/02/2026;Oui
+REF-011;Microphone USB;Audio;11;79,00;03/09/2026;Oui
+REF-012;Hub USB-C;Connectique;56;34,50;03/09/2026;Oui
+REF-012;Hub USB-C 7 ports;Connectique;12;49,00;03/09/2026;Oui
+REF-013;Clé USB 64 Go;Stockage;210;12,00;04/09/2026;Oui
+REF-014;Disque SSD 1 To;Stockage;23;89,90;04/09/2026;Oui
+REF-015;Disque dur externe 2 To;Stockage;17;74,00;04/09/2026;Oui
+REF-015;Disque dur externe 2 To;Stockage;17;74,00;04/09/2026;Oui
+REF-016;Tapis de souris;Informatique;95;9,90;05/09/2026;Oui
+REF-017;Support écran;Mobilier;14;39,00;05/09/2026;Peut-être
+REF-018;Rallonge multiprise;Connectique;64;15,90;05/09/2026;Oui
+REF-019;Imprimante laser;Informatique;6;199,00;05/09/2026;Non
+REF-020;Cartouche toner;Consommables;48;64,90;06/09/2026;Oui
+REF-021;Ramette papier A4;Consommables;150;4,50;06/09/2026;Oui
+REF-022;Adaptateur USB-C vers HDMI;Connectique;38;19,90;06/09/2026;Oui
+REF-023;Repose-poignets;Mobilier;22;14,90;06/09/2026;Oui

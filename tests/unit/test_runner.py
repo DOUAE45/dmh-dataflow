@@ -60,3 +60,21 @@ def test_missing_required_column_fails_without_loading(engine, tmp_path):
     assert "SchemaMismatchError" in result.error
     assert result.quality.score == 0.0
     assert result.rows_valid == 0
+
+
+def test_french_excel_export_is_processed(engine):
+    # Séparateur ";", Latin-1, dates JJ/MM/AAAA, en-têtes accentués renommés par le YAML.
+    source = "data/sample/demo_inventaire.csv"
+    result = run_pipeline(source, "demo_inventaire", "test", engine=engine)
+
+    assert result.status is RunStatus.SUCCESS, result.error
+    assert (result.rows_read, result.rows_valid, result.rows_rejected) == (25, 19, 6)
+    assert result.quality.score == 76.0
+
+    table = repository.data_table(load_dataset_config("demo_inventaire").schema)
+    with engine.connect() as conn:
+        row = conn.execute(select(table).where(table.c.ref == "REF-003")).mappings().one()
+    assert row["designation"] == "Écran 24 pouces"
+    assert row["categorie"] == "informatique"
+    assert row["prix_unitaire"] == 159.0
+    assert str(row["date_inventaire"]) == "2026-09-01"
