@@ -1,0 +1,31 @@
+# --- Secrets : ne jamais versionner ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Données : seuls les jeux de démo (data/sample) sont versionnés ---
+data/raw/*
+data/incoming/*
+data/quarantine/*
+!data/**/.gitkeep
+
+# --- Airflow ---
+airflow/logs/
+airflow/plugins/__pycache__/
+
+# --- Éditeurs / OS ---
+.vscode/
+.idea/
+.DS_Store

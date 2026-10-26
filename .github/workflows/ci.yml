@@ -1,0 +1,51 @@
+# Intégration continue : lint + tests à chaque push et Pull Request.
+# Aucun déploiement : ce workflow ne publie rien vers un environnement externe.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -v
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: lint-and-unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Générer un .env éphémère (mots de passe aléatoires, jamais versionnés)
+        run: |
+          cp .env.example .env
+          for var in POSTGRES_SUPERUSER_PASSWORD DMH_DB_PASSWORD AIRFLOW_DB_PASSWORD; do
+            pwd="$(openssl rand -hex 16)"
+            echo "::add-mask::$pwd"
+            sed -i "s/^${var}=.*/${var}=${pwd}/" .env
+          done
+      - name: Démarrer PostgreSQL avec le docker-compose du projet
+        run: docker compose up -d --wait
+      - run: pip install -e ".[dev]"
+      - run: pytest -v -m integration
+      - name: Logs PostgreSQL en cas d'échec
+        if: failure()
+        run: docker compose logs postgres
+      - if: always()
+        run: docker compose down -v

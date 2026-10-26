@@ -1,0 +1,39 @@
+# DMH DataFlow — services Docker
+# Étape 2 : PostgreSQL uniquement. Airflow, Prometheus, Pushgateway et Grafana
+# seront ajoutés à l'étape 4 (ils ne sont pas déclarés tant qu'ils ne sont pas testés).
+#
+# Les secrets viennent du fichier .env (voir .env.example). Le `:?` fait échouer
+# le démarrage avec un message clair si une variable obligatoire manque.
+
+name: dmh
+
+services:
+  postgres:
+    image: postgres:16.15-alpine
+    container_name: dmh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_SUPERUSER:?POSTGRES_SUPERUSER manquant dans .env}
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?POSTGRES_SUPERUSER_PASSWORD manquant dans .env}
+      POSTGRES_DB: postgres
+      # Lus par docker/postgres/init/01-create-databases.sh (premier démarrage uniquement)
+      DMH_DB_NAME: ${DMH_DB_NAME:?}
+      DMH_DB_USER: ${DMH_DB_USER:?}
+      DMH_DB_PASSWORD: ${DMH_DB_PASSWORD:?DMH_DB_PASSWORD manquant dans .env}
+      AIRFLOW_DB_NAME: ${AIRFLOW_DB_NAME:?}
+      AIRFLOW_DB_USER: ${AIRFLOW_DB_USER:?}
+      AIRFLOW_DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:?AIRFLOW_DB_PASSWORD manquant dans .env}
+    ports:
+      # Lié à 127.0.0.1 : la base n'est pas accessible depuis le réseau local.
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
