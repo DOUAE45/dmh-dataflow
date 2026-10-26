@@ -1,0 +1,24 @@
+# Jeu de données fictif utilisé pour les démonstrations (data/sample/demo_sales.csv).
+#
+# Types possibles : int, float, str, date, bool
+#   required: false  -> une valeur vide est acceptée (défaut : true)
+#   unique: true     -> une valeur déjà vue sur une ligne précédente est rejetée
+name: demo_sales
+description: Ventes fictives d'une boutique en ligne
+
+columns:
+  - { name: order_id, dtype: int, unique: true }
+  - { name: order_date, dtype: date }
+  - { name: customer_email, dtype: str }
+  - { name: product, dtype: str }
+  - { name: quantity, dtype: int }
+  - { name: unit_price, dtype: float }
+  - { name: paid, dtype: bool, required: false }
+
+cleaning:
+  # Format des colonnes de type date (syntaxe strftime de Python)
+  date_format: "%Y-%m-%d"
+  # Colonnes mises en minuscules avant les contrôles (évite les faux doublons d'e-mails)
+  lowercase: [customer_email]
+  # Renommage des en-têtes du CSV : { nom_dans_le_csv: nom_dans_le_schema }
+  rename: {}

@@ -1,0 +1,21 @@
+order_id,order_date,customer_email,product,quantity,unit_price,paid
+1001,2026-09-01,amina.benali@example.com,Clavier,1,49.90,true
+1002,2026-09-01,yassine.idrissi@example.com,Souris,2,19.50,true
+1003,2026-09-02,salma.tazi@example.com,Écran 24 pouces,1,159.00,false
+1004,2026-09-02,omar.alaoui@example.com,Câble HDMI,3,"8,90",oui
+1005,2026-09-03,  Nadia.Chraibi@Example.com  ,Casque,1,79.99,true
+1006,2026-09-03,karim.fassi@example.com,Webcam,,45.00,true
+1007,2026-09-04,lina.berrada@example.com,Clavier,1,49.90,
+1008,04/09/2026,mehdi.amrani@example.com,Souris,1,19.50,true
+1009,2026-09-05,sara.ouazzani@example.com,Tapis de souris,2,abc,true
+1010,2026-09-05,youssef.kettani@example.com,Disque SSD 1 To,1,89.00,true
+1010,2026-09-05,hind.lahlou@example.com,Clé USB 64 Go,4,12.00,false
+1011,2026-09-06,,Hub USB-C,1,34.50,true
+1012,2026-09-06,imane.sqalli@example.com,Écran 27 pouces,1,249.00,true
+1012,2026-09-06,imane.sqalli@example.com,Écran 27 pouces,1,249.00,true
+1013,2026-09-07,adam.bennani@example.com,Clavier,2.5,49.90,true
+1014,2026-09-07,rania.zniber@example.com,Souris,1,19.50,peut-être
+1015,2026-09-08,anas.cherkaoui@example.com,Casque,1,79.99,non
+1016,2026-09-08,meriem.filali@example.com,Webcam,1,45.00,true
+1017,2026-09-09,hamza.slaoui@example.com,Câble HDMI,2,8.90,true
+1018,2026-09-09,ghita.belkadi@example.com,Disque SSD 1 To,1,89.00,false
