@@ -59,6 +59,7 @@ make up          # démarre PostgreSQL et attend qu'il soit prêt
 make db-check    # doit afficher : OK  utilisateur=dmh_app  base=dmh
 make test        # tests unitaires
 make test-int    # tests d'intégration (PostgreSQL requis)
+make check       # tout d'un coup : up + lint + test + test-int
 ```
 
 Activer l'environnement Python dans le terminal : `source .venv/bin/activate`.
@@ -119,7 +120,7 @@ En attendant une implémentation, chacune peut construire un `RunResult` factice
 
 1. `main` ne reçoit que des Pull Requests.
 2. Une branche par fonctionnalité : `feat/douae-quality-checks`, `feat/hala-dashboard`…
-3. Avant de pousser : `make lint && make test`.
+3. Avant de pousser : `make check`.
 4. Chaque PR est relue par une autre membre ; la CI doit être verte.
 
 ## Feuille de route
