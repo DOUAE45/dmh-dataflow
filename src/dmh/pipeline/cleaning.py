@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 import pandas as pd
@@ -29,9 +30,11 @@ def normalize(df: pd.DataFrame, config: DatasetConfig) -> pd.DataFrame:
     return out
 
 
-def clean(df: pd.DataFrame, config: DatasetConfig) -> CleaningResult:
+def clean(
+    df: pd.DataFrame, config: DatasetConfig, existing_keys: Mapping[str, set] | None = None
+) -> CleaningResult:
     """`df` doit déjà être normalisé (voir `normalize`)."""
-    checked = check_rows(df, config.schema, config.cleaning.date_format)
+    checked = check_rows(df, config.schema, config.cleaning.date_format, existing_keys)
     valid_mask = checked.valid_mask
 
     valid = checked.parsed.loc[valid_mask].reset_index(drop=True)

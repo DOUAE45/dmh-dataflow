@@ -70,3 +70,11 @@ def test_empty_dataframe_scores_100():
 def test_french_decimal_comma_is_accepted():
     report = assess_quality(_df([["1", "2026-01-01", "8,90", None]]), SCHEMA)
     assert report.format_errors_by_column["amount"] == 0
+
+
+def test_key_already_in_database_is_rejected():
+    df = _df([["1", "2026-01-01", "3", None], ["2", "2026-01-02", "4", None]])
+    result = check_rows(df, SCHEMA, existing_keys={"id": {1}})
+    assert result.valid_mask.tolist() == [False, True]
+    assert result.reasons.iloc[0] == "id déjà chargé en base"
+    assert result.report.score == 50.0
