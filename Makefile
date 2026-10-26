@@ -1,7 +1,7 @@
 # Raccourcis pour le terminal (macOS / VS Code).  `make help` pour la liste.
 PY := .venv/bin/python
 
-.PHONY: help venv env up down reset-db ps logs db-check test test-int lint
+.PHONY: help venv env up down reset-db ps logs db-check test test-int lint check
 
 help:
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-10s %s\n", $$1, $$2}'
@@ -46,3 +46,5 @@ test-int: ## Tests d'intégration (nécessite `make up`)
 
 lint: ## Analyse statique du code
 	$(PY) -m ruff check .
+
+check: up lint test test-int ## Tout vérifier avant une PR (comme la CI)
